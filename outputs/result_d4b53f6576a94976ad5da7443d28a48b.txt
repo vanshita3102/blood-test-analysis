@@ -1,0 +1,5 @@
+Parsed Metrics:
+{}
+
+Analysis:
+No recognizable metrics found in the report. This is a mock analysis.
