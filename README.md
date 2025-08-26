@@ -30,22 +30,22 @@ cd debug-assignment-fixed
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-2. Run Redis (make sure you have Redis installed locally or via Docker)
+###2. Run Redis (make sure you have Redis installed locally or via Docker)
 bash
 Copy
 Edit
 redis-server
-3. Start the Worker
+###3. Start the Worker
 bash
 Copy
 Edit
 rq worker
-4. Run the API
+###4. Run the API
 bash
 Copy
 Edit
 uvicorn main:app --reload
-📌 Usage
+###📌 Usage
 Analyze Endpoint
 Upload a PDF for analysis:
 
@@ -85,7 +85,7 @@ Edit
   },
   "notes": "This is a mock, non-medical analysis."
 }
-📂 Project Structure
+###📂 Project Structure
 bash
 Copy
 Edit
