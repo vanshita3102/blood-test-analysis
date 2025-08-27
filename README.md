@@ -19,6 +19,20 @@ Analyzes **blood test PDFs**, runs **rule-based analysis**, supports **backgroun
 - ✅ **Enhanced API endpoints for querying analysis history**
 - ✅ Simple setup & usage
 
+## 🎉 Database Integration in Action
+### Professional API Documentation
+<img width="500" alt="Interactive Swagger UI Documentation" src="https://github.com/user-attachments/assets/79f1047e-9644-419d-ba5b-7f07e3e05d13" />
+
+*Auto-generated interactive API documentation showing all database endpoints*
+
+### Database Integration Success
+<img width="400" alt="Database Tables Created Successfully" src="https://github.com/user-attachments/assets/daf3c8c8-efa9-4ae9-a50b-d9b9d3371051" />
+
+*Server startup showing successful database table creation*
+
+
+
+  
 ## 🐞 Bugs Fixed
 1. **Unsafe CrewAI dependencies** → replaced with deterministic mock logic
 2. **Direct PDF parsing issues** → fallback to data/sample.pdf included  
