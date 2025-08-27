@@ -1,49 +1,66 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException, Form
+from fastapi import FastAPI, File, UploadFile, HTTPException, Form, Depends
+from sqlalchemy.orm import Session
 import os
 import uuid
-from typing import Optional
+from typing import Optional, List
+from datetime import datetime
 
+# Import our new database components
+from database import get_database, engine
+from models import Base, User, AnalysisResult
+from schemas import (
+    UserCreate, User as UserSchema, 
+    AnalysisResultCreate, AnalysisResult as AnalysisResultSchema,
+    AnalysisResultWithUser
+)
 from tools import read_pdf_text, parse_metrics_from_text, analyze_metrics
 
-app = FastAPI(title="Blood Test Report Analyser (Safe Mock)")
+app = FastAPI(title="Blood Test Report Analyser (With Database)")
+
+# Create database tables on startup
+@app.on_event("startup")
+def create_tables():
+    """
+    This runs when the app starts up
+    It creates all our database tables if they don't exist
+    """
+    Base.metadata.create_all(bind=engine)
+    print("Database tables created successfully!")
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
-OUTPUTS_DIR = os.path.join(os.path.dirname(__file__), "outputs")
-os.makedirs(OUTPUTS_DIR, exist_ok=True)
+os.makedirs(DATA_DIR, exist_ok=True)
 
 @app.get("/health")
 def health():
-    return {"ok": True}
+    return {"ok": True, "database": "connected"}
 
-@app.post("/analyze")
-async def analyze(file: Optional[UploadFile] = File(None), async_mode: bool = Form(False)):
-    '''
-    Upload a blood test PDF (multipart/form-data).
-    If no file is provided, the server will analyze data/sample.pdf.
-    '''
-    # Save uploaded file
-    if file is not None:
-        filename = f"upload_{uuid.uuid4().hex}_{file.filename}"
-        file_path = os.path.join(DATA_DIR, filename)
-        with open(file_path, "wb") as f:
-            content = await file.read()
-            f.write(content)
-    else:
-        file_path = os.path.join(DATA_DIR, "sample.pdf")
-        if not os.path.exists(file_path):
-            raise HTTPException(status_code=400, detail="No file uploaded and sample.pdf not found.")
+@app.post("/analyze", response_model=AnalysisResultSchema)
+async def analyze(
+    file: Optional[UploadFile] = File(None), 
+    user_email: Optional[str] = Form(None),
+    user_name: Optional[str] = Form(None),
+    db: Session = Depends(get_database)
+):
+    """
+    Analyze a blood test PDF and save results to database
 
-    try:
-        text = read_pdf_text(file_path)
-        metrics = parse_metrics_from_text(text)
-        result = analyze_metrics(metrics)
-        # persist result to outputs
-        out_path = os.path.join(OUTPUTS_DIR, f"result_{uuid.uuid4().hex}.txt")
-        with open(out_path, "w", encoding="utf-8") as fo:
-            fo.write("Parsed Metrics:\n")
-            fo.write(str(metrics) + "\n\n")
-            fo.write("Analysis:\n")
-            fo.write(result)
-        return {"status":"success", "metrics": metrics, "analysis": result}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    New features:
+    - Creates or finds a user based on email
+    - Saves analysis results to database instead of files
+    - Returns structured data
+    """
+
+ # Handle user creation/retrieval
+    user = None
+    if user_email:
+        # Try to find existing user
+        user = db.query(User).filter(User.email == user_email).first()
+        if not user:
+            # Create new user
+            user = User(email=user_email, name=user_name)
+            db.add(user)
+            db.commit()
+            db.refresh(user)
+            print(f"Created new user: {user.email}")
+
+    # Handl
