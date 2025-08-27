@@ -1,7 +1,5 @@
 # 🧪 Blood Test Analyser — Fixed & Enhanced  
 
-🧪 Blood Test Analyser — Fixed & Enhanced
-
 ![Python](https://img.shields.io/badge/python-v3.8+-blue.svg)
 ![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=flat&logo=fastapi)
 ![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=flat&logo=redis&logoColor=white)
