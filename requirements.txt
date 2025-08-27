@@ -1,4 +1,14 @@
+# Core FastAPI dependencies
 fastapi
 uvicorn
 python-dotenv
 PyPDF2
+
+# Database dependencies  
+sqlalchemy>=2.0.0
+alembic
+python-multipart
+
+# Background processing (Redis Queue)
+redis
+rq
